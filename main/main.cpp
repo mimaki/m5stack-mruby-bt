@@ -22,17 +22,49 @@ extern "C" void InitGattServer();
 
 void mrubyTask(void *pvParameters)
 {
+  mrb_state *mrb = (mrb_state*)pvParameters;
+
+  printf("mrb=%p\n", mrb);
   printf("Hello, m5stack-mruby-bt!\n");
+
+  /* Initialize M5Stack */
+  M5.begin();
+
+  /* Open mruby VM */
+  // mrb = mrb_open();
+  if (!mrb) {
+    M5.lcd.print("mrb_open() failed.\n");
+    goto ERROR;
+  }
+  printf("mruby VM opened. mrb=%p\n", mrb);
+
+  mrb_close(mrb);
+  printf("mruby VM closed.\n");
+
+ERROR:
   while (1) {
     micros();
   }
 }
 
 
+#define MRUBY_TASK_STACK_SIZE 16384
+
 extern "C" void app_main()
 {
+  /* Start GATT Server */
   InitGattServer();
 
+  /* Initialize Arduino component */
   initArduino();
-  xTaskCreatePinnedToCore(mrubyTask, "mrubyTask", 8192, NULL, 1, NULL, ARDUINO_RUNNING_CORE);
+
+  /* Initialize M5Stack component */
+  M5.begin();
+
+  /* Initalize mruby */
+  mrb_state *mrb = mrb_open();
+  printf("mrb=%p\n", mrb);
+
+  /* Start mruby task */
+  xTaskCreatePinnedToCore(mrubyTask, "mrubyTask", MRUBY_TASK_STACK_SIZE, mrb, 1, NULL, ARDUINO_RUNNING_CORE);
 }
