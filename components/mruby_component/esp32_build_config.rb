@@ -37,8 +37,9 @@ MRuby::CrossBuild.new('esp32') do |conf|
 
     cc.defines << %w(MRB_HEAP_PAGE_SIZE=64)
     cc.defines << %w(KHASH_DEFAULT_SIZE=8)
-    cc.defines << %w(MRB_STR_BUF_MIN_SIZE=20)
     cc.defines << %w(MRB_GC_STRESS)
+
+    cc.defines << %w(MRB_STR_BUF_MIN_SIZE=20)
     cc.defines << %w(MRB_METHOD_T_STRUCT)
 
     cc.defines << %w(ESP_PLATFORM)
