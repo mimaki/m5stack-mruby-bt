@@ -102,6 +102,16 @@ void mrubyTask(void *pvParameters)
 // #undef ARDUINO_RUNNING_CORE
 // #define ARDUINO_RUNNING_CORE  0
 
+extern "C" void GattNotify(uint8_t*, size_t);
+extern "C" mrb_value mrb_ble_notify(mrb_state *mrb, mrb_value self)
+{
+  char *s;
+  mrb_int len;
+  mrb_get_args(mrb, "s", &s, &len);
+  GattNotify((uint8_t*)s, (size_t)len);
+  return self;
+}
+
 extern "C" void app_main()
 {
   /* Start GATT Server */
@@ -119,6 +129,7 @@ extern "C" void app_main()
     M5.lcd.print("mrb_open() failed.\n");
     return;
   }
+  mrb_define_method(mrb, mrb->object_class, "ble_notify", mrb_ble_notify, MRB_ARGS_REQ(1));
 
   /* Start mruby task */
   xTaskCreatePinnedToCore(mrubyTask, "mrubyTask", MRUBY_TASK_STACK_SIZE, mrb, 1, NULL, ARDUINO_RUNNING_CORE);

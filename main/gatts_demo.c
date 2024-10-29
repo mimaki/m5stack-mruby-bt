@@ -53,8 +53,9 @@ static void gatts_profile_b_event_handler(esp_gatts_cb_event_t event, esp_gatt_i
 #define GATTS_CHAR_UUID_TEST_B      0xEE01
 #define GATTS_DESCR_UUID_TEST_B     0x2222
 #define GATTS_NUM_HANDLE_TEST_B     4
+#define CONN_ID_NONE                0xffff
 
-#define TEST_DEVICE_NAME            "ESP_GATTS_DEMO"
+#define TEST_DEVICE_NAME            "M5mrb01"
 #define TEST_MANUFACTURER_DATA_LEN  17
 
 #define GATTS_DEMO_CHAR_VAL_LEN_MAX 0x40
@@ -167,10 +168,12 @@ static struct gatts_profile_inst gl_profile_tab[PROFILE_NUM] = {
     [PROFILE_A_APP_ID] = {
         .gatts_cb = gatts_profile_a_event_handler,
         .gatts_if = ESP_GATT_IF_NONE,       /* Not get the gatt_if, so initial is ESP_GATT_IF_NONE */
+        .conn_id  = CONN_ID_NONE,
     },
     [PROFILE_B_APP_ID] = {
         .gatts_cb = gatts_profile_b_event_handler,                   /* This demo does not implement, similar as profile A */
         .gatts_if = ESP_GATT_IF_NONE,       /* Not get the gatt_if, so initial is ESP_GATT_IF_NONE */
+        .conn_id  = CONN_ID_NONE,
     },
 };
 
@@ -469,7 +472,7 @@ static void gatts_profile_a_event_handler(esp_gatts_cb_event_t event, esp_gatt_i
         esp_ble_conn_update_params_t conn_params = {0};
         memcpy(conn_params.bda, param->connect.remote_bda, sizeof(esp_bd_addr_t));
         /* For the IOS system, please reference the apple official documents about the ble connection parameters restrictions. */
-        conn_params.latency = 0;
+        conn_params.latency = 200;
         conn_params.max_int = 0x20;    // max_int = 0x20*1.25ms = 40ms
         conn_params.min_int = 0x10;    // min_int = 0x10*1.25ms = 20ms
         conn_params.timeout = 400;    // timeout = 400*10ms = 4000ms
@@ -484,6 +487,7 @@ static void gatts_profile_a_event_handler(esp_gatts_cb_event_t event, esp_gatt_i
     }
     case ESP_GATTS_DISCONNECT_EVT:
         ESP_LOGI(GATTS_TAG, "ESP_GATTS_DISCONNECT_EVT, disconnect reason 0x%x", param->disconnect.reason);
+        gl_profile_tab[PROFILE_A_APP_ID].conn_id = CONN_ID_NONE;
         esp_ble_gap_start_advertising(&adv_params);
         break;
     case ESP_GATTS_CONF_EVT:
@@ -739,4 +743,30 @@ void InitGattServer()
     }
 
     return;
+}
+
+uint8_t IsBLEConnected(uint16_t);
+
+void GattNotify(uint16_t id, uint8_t *data, size_t length)
+{
+    ESP_LOGI(GATTS_TAG, "GattNotify: len=%d", length);
+    struct gatts_profile_inst *profile = &gl_profile_tab[id];
+
+    if (IsBLEConnected(id)) {
+        // 接続中の場合のみNotifyする
+        esp_ble_gatts_send_indicate(
+            profile->gatts_if, 
+            0,  //param->write.conn_id,
+            profile->char_handle,
+            (uint16_t)length,
+            data,
+            false);
+    }
+}
+
+uint8_t IsBLEConnected(uint16_t id)
+{
+    uint8_t isConn = gl_profile_tab[id].conn_id != CONN_ID_NONE;
+    ESP_LOGI(GATTS_TAG, "IsBLEConnected: %d", isConn);
+    return isConn;
 }
