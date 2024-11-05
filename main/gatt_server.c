@@ -38,7 +38,9 @@
 
 #include "mruby.h"
 
-#define GATTS_TAG "GATTS_DEMO"
+#include "bt_device_id.h"
+
+#define GATTS_TAG "GATT"
 
 ///Declare the static function
 static void gatts_profile_a_event_handler(esp_gatts_cb_event_t event, esp_gatt_if_t gatts_if, esp_ble_gatts_cb_param_t *param);
@@ -55,12 +57,17 @@ static void gatts_profile_b_event_handler(esp_gatts_cb_event_t event, esp_gatt_i
 #define GATTS_NUM_HANDLE_TEST_B     4
 #define CONN_ID_NONE                0xffff
 
-#define TEST_DEVICE_NAME            "M5mrb01"
+// #define TEST_DEVICE_NAME            "M5mrb01"
 #define TEST_MANUFACTURER_DATA_LEN  17
 
 #define GATTS_DEMO_CHAR_VAL_LEN_MAX 0x40
 
 #define PREPARE_BUF_MAX_SIZE 1024
+
+#define BT_DEVICE_NAME_PREFIX       "M5mrb"
+#define BT_DEVICE_NAME_FORMAT       BT_DEVICE_NAME_PREFIX "%02d"
+static char sDeviceName[] = BT_DEVICE_NAME_PREFIX BT_DEVICE_ID;
+#define BT_DEVICE_NAME              sDeviceName
 
 uint8_t char1_str[] = {0x11,0x22,0x33};
 esp_gatt_char_prop_t a_property = 0;
@@ -312,7 +319,7 @@ static void gatts_profile_a_event_handler(esp_gatts_cb_event_t event, esp_gatt_i
         gl_profile_tab[PROFILE_A_APP_ID].service_id.id.uuid.len = ESP_UUID_LEN_16;
         gl_profile_tab[PROFILE_A_APP_ID].service_id.id.uuid.uuid.uuid16 = GATTS_SERVICE_UUID_TEST_A;
 
-        esp_err_t set_dev_name_ret = esp_ble_gap_set_device_name(TEST_DEVICE_NAME);
+        esp_err_t set_dev_name_ret = esp_ble_gap_set_device_name(BT_DEVICE_NAME);
         if (set_dev_name_ret){
             ESP_LOGE(GATTS_TAG, "set device name failed, error code = %x", set_dev_name_ret);
         }
