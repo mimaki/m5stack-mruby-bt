@@ -774,6 +774,6 @@ void GattNotify(uint16_t id, uint8_t *data, size_t length)
 uint8_t IsBLEConnected(uint16_t id)
 {
     uint8_t isConn = gl_profile_tab[id].conn_id != CONN_ID_NONE;
-    ESP_LOGI(GATTS_TAG, "IsBLEConnected: %d", isConn);
+    // ESP_LOGI(GATTS_TAG, "IsBLEConnected: %d", isConn);
     return isConn;
 }
