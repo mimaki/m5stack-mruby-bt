@@ -74,5 +74,9 @@ MRuby::CrossBuild.new('esp32') do |conf|
   # conf.gem :git => "https://github.com/mruby-plato-mgem/mruby-plato-i2c.git"
   # conf.gem :git => "https://github.com/mruby-plato-mgem/mruby-plato-i2c-esp32.git"
   conf.gem :git => "https://github.com/mimaki/mruby-m5stack-i2c.git"
+  conf.gem :core => "../../../../mrbgems/mruby-i2c-device"
+  conf.gem :core => "../../../../mrbgems/mruby-grove-water-level-sensor"
+  conf.gem :core => "../../../../mrbgems/mruby-grove-temp-humi-sensor"
+  conf.gem :core => "../../../../mrbgems/mruby-grove-color-sensor"
   conf.gem :core => "../../../../mrbgems/mruby-m5stack-ble-gatt"
 end

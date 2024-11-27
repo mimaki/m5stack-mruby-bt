@@ -97,7 +97,7 @@ void mrubyTask(void *pvParameters)
 }
 
 
-#define MRUBY_TASK_STACK_SIZE 16384
+#define MRUBY_TASK_STACK_SIZE 8192
 
 // #undef ARDUINO_RUNNING_CORE
 // #define ARDUINO_RUNNING_CORE  0
