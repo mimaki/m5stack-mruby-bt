@@ -51,11 +51,12 @@ void mrubyTask(void *pvParameters)
   mrb_state *mrb = (mrb_state*)pvParameters;
   mrb_value val;
 
-  printf("mrb=%p\n", mrb);
-  printf("Hello, m5stack-mruby-bt!\n");
+  // printf("mrb=%p\n", mrb);
+  // printf("Hello, m5stack-mruby-bt!\n");
 
   /* Initialize M5Stack */
   M5.begin();
+  puts("M5Stack component initialized.");
 
   /* Open mruby VM */
   // mrb = mrb_open();
@@ -116,9 +117,11 @@ extern "C" void app_main()
 {
   /* Start GATT Server */
   InitGattServer();
+  puts("GATT Server initialized.");
 
   /* Initialize Arduino component */
   initArduino();
+  puts("Arduino component initialized.");
 
   /* Initialize M5Stack component */
   // M5.begin();
@@ -129,6 +132,7 @@ extern "C" void app_main()
     M5.lcd.print("mrb_open() failed.\n");
     return;
   }
+  puts("mruby VM initialized.");
   mrb_define_method(mrb, mrb->object_class, "ble_notify", mrb_ble_notify, MRB_ARGS_REQ(1));
 
   /* Start mruby task */
