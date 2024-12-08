@@ -113,6 +113,17 @@ extern "C" mrb_value mrb_ble_notify(mrb_state *mrb, mrb_value self)
   return self;
 }
 
+extern "C" mrb_value mrb_sound_tone(mrb_state *mrb, mrb_value self)
+{
+  mrb_int freq, msec;
+  mrb_get_args(mrb, "ii", &freq, &msec);
+  M5.Speaker.begin();
+  M5.Speaker.tone(freq, msec);
+  delay(msec);
+  M5.Speaker.end();
+  return self;
+}
+
 extern "C" void app_main()
 {
   /* Start GATT Server */
@@ -134,6 +145,8 @@ extern "C" void app_main()
   }
   puts("mruby VM initialized.");
   mrb_define_method(mrb, mrb->object_class, "ble_notify", mrb_ble_notify, MRB_ARGS_REQ(1));
+  struct RClass *sound = mrb_define_class(mrb, "Sound", mrb->object_class);
+  mrb_define_method(mrb, sound, "tone", mrb_sound_tone, MRB_ARGS_REQ(2));
 
   /* Start mruby task */
   xTaskCreatePinnedToCore(mrubyTask, "mrubyTask", MRUBY_TASK_STACK_SIZE, mrb, 1, NULL, ARDUINO_RUNNING_CORE);

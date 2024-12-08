@@ -1,6 +1,8 @@
 # BLE class
 
 class BLE
+  @buf = ""
+
   def send_temp_humi(temp, humi)
     notify "TH,#{temp},#{humi}"
   end
@@ -24,5 +26,16 @@ class BLE
   def send(val)
     val = val.to_s unless val.class == String
     notify val
+  end
+
+  def gets
+    loop {
+      v = read
+      if @buf != v
+        @buf = v
+        return @buf
+      end
+      delay 1
+    }
   end
 end
