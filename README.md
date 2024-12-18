@@ -16,23 +16,22 @@ M5Stack-mruby provide mruby programming platform in below.
 Please install the following software required to build `M5Stack-mruby`.
 
 - [Ruby](https://www.ruby-lang.org/)
-- [GNU Bison](https://www.gnu.org/software/bison/)
 - [Git](https://git-scm.com/)
-- [esp-idf](https://github.com/espressif/esp-idf)
+- [esp-idf](https://github.com/espressif/esp-idf) (Confirmed in v3.1.3)
 
 ## Download M5Stack-mruby
 
-Change to the directory where you installed `esp-idf` and get the source code of `M5Stack-mruby`.
+Change to the directory where you installed `esp-idf` and get the source code of `M5Stack-mruby-bt`.
 
 ```bash
 cd ~/esp
-git clone --recursive https://github.com/mimaki/M5Stack-mruby.git
+git clone --recursive https://github.com/mimaki/M5Stack-mruby-bt.git
 ```
 
 ## Build and write to M5Stack
 
 Connect M5Stack and PC with USB cable.  
-Type below command at `M5Stack-mruby` directory.
+Type below command at `M5Stack-mruby-bt` directory.
 
 ```bash
 make flash
@@ -41,7 +40,7 @@ make flash
 ## Execution of mruby application
 
 `M5Stack-mruby` can execute mruby application (binary) compiled with mruby compiler (mrbc).  
-The mruby compiler (mrbc) is generated in the ``M5Stack-mruby/components/mruby_component/mruby/bin`` directory.
+The mruby compiler (mrbc) is generated in the ``M5Stack-mruby-bt/components/mruby_component/mruby/bin`` directory.
 
 The sample program `japan.rb` and the procedure to compile it are shown below.
 
@@ -57,7 +56,7 @@ gets
 ### Compile
 
 ```bash
-M5Stack-mruby/components/mruby_component/mruby/bin/mrbc -o autorun.mrb japan.rb
+M5Stack-mruby-bt/components/mruby_component/mruby/bin/mrbc -o autorun.mrb japan.rb
 ```
 
 Insert the microSD card whose `autorun.mrb` is copied to the root directory into the M5Stack's SD card slot and power on (or reset) the M5Stack to execute the mruby application saved on the microSD card.
