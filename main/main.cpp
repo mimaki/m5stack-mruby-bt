@@ -2,6 +2,7 @@
 
 #include <stdio.h>
 #include <stdint.h>
+#define MRB_NO_BOXING
 #include "mruby.h"
 #include "mruby/dump.h"
 #include "mruby/variable.h"
